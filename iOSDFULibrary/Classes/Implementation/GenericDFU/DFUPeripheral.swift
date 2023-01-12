@@ -314,7 +314,10 @@ internal class BaseDFUPeripheral<TD : BasePeripheralDelegate> : NSObject, BaseDF
             // or
             // code = 6: "The connection has timed out unexpectedly." (in case it disconnected
             //           before sending the ACK).
+            // NOTE: iOS15.6+/iOS16+ appear to always report 'unknown' even when they should be
+            //           reporting peripheralDisconnected
             if let cbError = error as? CBError,
+               cbError.code == CBError.unknown ||
                cbError.code == CBError.connectionTimeout ||
                cbError.code == CBError.peripheralDisconnected {
                 logger.d("[Callback] Central Manager did disconnect peripheral")
